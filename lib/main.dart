@@ -1,5 +1,8 @@
+import 'package:family/message_list.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'family.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,6 +37,34 @@ class ChatDetails extends StatefulWidget {
 }
 
 class _ChatDetailsState extends State<ChatDetails> {
+  final TextEditingController _textController = new TextEditingController();
+
+  void _handleSubmitted(String text){
+    _textController.clear();
+    // push message to firestore and call setState() ?
+    return;
+    final DocumentReference postRef = Firestore.instance.collection('families').document(familyId);
+    Firestore.instance.runTransaction((Transaction tx) async {
+      DocumentSnapshot postSnapshot = await tx.get(postRef);
+      if (postSnapshot.exists) {
+        Object msg = {'content': text, 'sender': myId, 'type': 'chat', 'timestamp': ''};
+        await tx.update(postRef, <String, dynamic>{'messages': postSnapshot.data['messages'] + msg});
+      }
+    });
+  }
+
+  Widget _buildTextComposer(){
+    return new Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: new TextField(
+        controller: _textController,
+        onSubmitted: _handleSubmitted,
+        decoration: new InputDecoration.collapsed(
+            hintText: "Send a message"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,45 +117,7 @@ class _ChatDetailsState extends State<ChatDetails> {
             child: Column(
               children: <Widget>[
                 Flexible(
-                  child: ListView.builder(
-                    itemCount: 1,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              'Today',
-                              style:
-                              TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                            Bubble(
-                              message: 'Hi How are you ?',
-                              isMe: true,
-                            ),
-                            Bubble(
-                              message: 'have you seen the docs yet?',
-                              isMe: true,
-                            ),
-                            Text(
-                              'Feb 25, 2018',
-                              style:
-                              TextStyle(color: Colors.grey, fontSize: 12),
-                            ),
-                            Bubble(
-                              message: 'i am fine !',
-                              isMe: false,
-                            ),
-                            Bubble(
-                              message: 'yes i\'ve seen the docs',
-                              isMe: false,
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                  child: new MessageList()
                 ),
               ],
             ),
@@ -144,7 +137,7 @@ class _ChatDetailsState extends State<ChatDetails> {
               ]),
               child: Row(
                 children: <Widget>[
-                  IconButton(
+                  /* IconButton(
                     onPressed: () {},
                     icon: Icon(
                       Icons.camera,
@@ -160,18 +153,20 @@ class _ChatDetailsState extends State<ChatDetails> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 15),
-                  ),
+                  ),*/
                   Expanded(
-                    child: TextFormField(
+                    child: TextField(
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
-                        hintText: 'Enter Message',
+                        hintText: 'Send a message',
                         border: InputBorder.none,
                       ),
+                      controller: _textController,
+                      onSubmitted: _handleSubmitted
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => _handleSubmitted(_textController.text),
                     icon: Icon(
                       Icons.send,
                       color: Color(0xff3E8DF3),
@@ -187,83 +182,3 @@ class _ChatDetailsState extends State<ChatDetails> {
   }
 }
 
-class Bubble extends StatelessWidget {
-  final bool isMe;
-  final String message;
-
-  Bubble({this.message, this.isMe});
-
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      padding: isMe ? EdgeInsets.only(left: 40) : EdgeInsets.only(right: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-            crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  gradient: isMe
-                      ? LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [
-                        0.1,
-                        1
-                      ],
-                      colors: [
-                        Color(0xFFF6D365),
-                        Color(0xFFFDA085),
-                      ])
-                      : LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [
-                        0.1,
-                        1
-                      ],
-                      colors: [
-                        Color(0xFFEBF5FC),
-                        Color(0xFFEBF5FC),
-                      ]),
-                  borderRadius: isMe
-                      ? BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    topLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(15),
-                  )
-                      : BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    topLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                    bottomLeft: Radius.circular(0),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment:
-                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      message,
-                      textAlign: isMe ? TextAlign.end : TextAlign.start,
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.grey,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
