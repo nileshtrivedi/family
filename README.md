@@ -4,7 +4,7 @@
 
 Messaging app for closed, trusted groups like families. NOT a social network. Open-source, ad-free, private and secure with end-to-end encryption, multi-platform and multi-device. Built with Flutter.
 
-![screenshot](screenshot1.jpeg)
+![screenshot](screenshot1.png)
 
 # Design principles
 
