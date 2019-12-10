@@ -26,3 +26,13 @@ Messaging app for closed, trusted groups like families. NOT a social network. Op
   - Cloud Firestore with encrypted data and ability to delete
   - Federated server like a Matrix.org instance
   - Completely peer-to-peer (distributed, serverless) protocol like secure ScuttleButt
+
+# How to Contribute
+
+- Create a Firebase project and add your `google-services.json` file to `android/app` folder. Don't worry, this won't get committed as it is added in top-level `.gitignore`.
+
+- Create a Cloud Firestore database with this structure:
+
+![db](db.png)
+
+- Replace the value of `familyId` in `lib/family.dart` and then launch the app. 
