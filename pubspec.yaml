@@ -17,8 +17,8 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  flutter_map:
-  cloud_firestore:
+  cloud_firestore: ^0.13.0+1
+  google_maps_flutter: ^0.5.21+15
 
   flutter:
     sdk: flutter

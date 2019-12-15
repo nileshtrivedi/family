@@ -110,7 +110,7 @@ class _ChatDetailsState extends State<ChatDetails> {
               ]),
               child: Row(
                 children: <Widget>[
-                  /* IconButton(
+                   IconButton(
                     onPressed: () {},
                     icon: Icon(
                       Icons.camera,
@@ -126,17 +126,17 @@ class _ChatDetailsState extends State<ChatDetails> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 15),
-                  ),*/
+                  ),
                   Expanded(
                     child: TextField(
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          hintText: 'Send a message',
-                          border: InputBorder.none,
-                        ),
-                        controller: _textController,
-                        onSubmitted: _handleSubmitted
-                    ),
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            hintText: 'Send a message',
+                            border: InputBorder.none,
+                          ),
+                          controller: _textController,
+                          onSubmitted: _handleSubmitted
+                      ),
                   ),
                   IconButton(
                     onPressed: () => _handleSubmitted(_textController.text),
